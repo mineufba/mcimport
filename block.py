@@ -113,21 +113,23 @@ class MCBlock:
             self.from_chunk(chunk, yslice)
 
         self.tile_entities = []
-        for te in chunk["TileEntities"]:
-            if (te["y"]>>4) == yslice:
-                t = te.copy()
-                # Entity data stores it's own position information, so has to be modified independently in addition to other blocks.
-                t["y"] &= 0xf
-                t["y"] = t["y"] -16
-                # within the chunk x position has to be inverted to convert to minetest:-
-                if is_anvil:
-                    t["x"] = self.pos[0]*16 + 15-t["x"]%16
-                self.tile_entities.append(t)
+        if "TileEntities" in chunk:
+	        for te in chunk["TileEntities"]:
+	            if (te["y"]>>4) == yslice:
+	                t = te.copy()
+	                # Entity data stores it's own position information, so has to be modified independently in addition to other blocks.
+	                t["y"] &= 0xf
+	                t["y"] = t["y"] -16
+	                # within the chunk x position has to be inverted to convert to minetest:-
+	                if is_anvil:
+	                    t["x"] = self.pos[0]*16 + 15-t["x"]%16
+	                self.tile_entities.append(t)
 
         self.entities = []
-        for e in chunk["Entities"]:
-            t = e.copy()
-            self.entities.append(t)
+        if "Entities" in chunk:
+	        for e in chunk["Entities"]:
+	            t = e.copy()
+	            self.entities.append(t)
 
 
     @staticmethod
